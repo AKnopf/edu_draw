@@ -16,4 +16,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'gosu', '~>0.8'
   s.add_development_dependency 'mocha', '~>1.1'
+  s.add_development_dependency 'minitest-focus', '~>1.1'
 end
