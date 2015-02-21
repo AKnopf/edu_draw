@@ -58,5 +58,16 @@ module EduDraw
 		def test_angle_in_rad
 			assert_equal 25 * Math::PI / 180.0, @pen.angle_in_rad
 		end
+
+		def test_area
+			assert_respond_to @pen, :fill
+			@sheet_stub.expects(:shapes).times(2).returns [] # expect two rectangles
+			@pen.fill do
+				4.times do
+					@pen.move 10
+					@pen.turn_right 90
+				end
+			end
+		end
 	end
 end

@@ -2,6 +2,8 @@ module EduDraw
 	# A Pen is a drawing tool that provides basic drawing functionalities on a 2d {Sheet}.
 	class Pen
 
+		PIXEL_TOLERANCE = 0.2
+
 		# @return [Fixnum] x-coordinate of position in pixel where left is 0
 		attr_reader :x
 
@@ -26,6 +28,7 @@ module EduDraw
 			@angle = angle
 			@color = color
 			@sheet = sheet
+			@to_be_filled = []
 
 			down!
 		end
@@ -59,16 +62,16 @@ module EduDraw
 
 		# Lifts the pen from the {Sheet}
 		#
-		# @see {#up?}
-		# @see {#down?}
+		# @see #up?
+		# @see #down?
 		def up!
 			@up = true
 		end
 
 		# Sticks the pen to the {Sheet}
 		#
-		# @see {#up?}
-		# @see {#down?}
+		# @see #up?
+		# @see #down?
 		def down!
 			@up = false
 		end
@@ -80,9 +83,7 @@ module EduDraw
 		def move(length)
 			target_x = x + Math.cos(angle_in_rad) * length
 			target_y = y + Math.sin(angle_in_rad) * length
-			if down?
-				@sheet.shapes << [:draw_line, x, y, color, target_x, target_y, color]
-			end
+			handle_movement x, y, target_x, target_y
 			@x = target_x
 			@y = target_y
 		end
@@ -91,5 +92,46 @@ module EduDraw
 		def angle_in_rad
 			angle * Math::PI / 180.0
 		end
+
+		def fill(&block)
+			@to_be_filled << [x,y]
+			instance_eval &block
+			if starting_point_is_end_point?
+				@to_be_filled.delete_at(0)
+			end
+			origin_x = @to_be_filled.first[0]
+			origin_y = @to_be_filled.first[1]
+			@to_be_filled[1..@to_be_filled.length-1].each_cons(2) do |point_a, point_b|
+				@sheet.shapes << [:draw_triangle,
+					origin_x, origin_y, color,
+					point_a[0], point_a[1], color,
+					point_b[0], point_b[1], color]
+			end
+			@to_be_filled.clear
+		end
+
+		def fill_mode?
+			@to_be_filled.length > 0
+		end
+
+		private
+			def handle_movement(x, y, target_x, target_y)
+				if down?
+					if fill_mode?
+						@to_be_filled << [target_x, target_y]
+					else
+						@sheet.shapes << [:draw_line, x, y, color, target_x, target_y, color]
+					end
+				end
+			end
+
+			def starting_point_is_end_point?
+				start_x = @to_be_filled.first[0]
+				start_y = @to_be_filled.first[1]
+				end_x = @to_be_filled.last[0]
+				end_y = @to_be_filled.last[1]
+				(start_x - end_x).abs <= PIXEL_TOLERANCE and
+					(start_y - end_y).abs <= PIXEL_TOLERANCE
+			end
 	end
 end

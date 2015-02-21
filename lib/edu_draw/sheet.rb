@@ -23,7 +23,7 @@ module EduDraw
 
 		# Creates a new {Pen} that draws on self
 		#
-		# @see {Pen}
+		# @see Pen
 		#
 		# @param x [Fixnum] x-coordinate of starting position. Left is 0.
 		# @param y [Fixnum] y-coordinate of starting position. Top is 0.
