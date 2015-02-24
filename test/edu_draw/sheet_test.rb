@@ -12,7 +12,7 @@ module EduDraw
 		end
 
 		def test_cursor_visible
-			assert @sheet.needs_cursor?
+			assert @sheet.send :needs_cursor?
 		end
 
 		def test_window
@@ -26,8 +26,14 @@ module EduDraw
 
 		def test_new_pen_creates_new_instance
 			Pen.expects(:new).once
+			AnimationPen.expects(:new).never
 			@sheet.new_pen
 		end
 
+		def test_new_animation_pen
+			AnimationPen.expects(:new).never
+			Pen.expects(:new).once
+			@sheet.new_animation_pen
+		end
 	end
 end

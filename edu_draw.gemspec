@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'edu_draw'
-  s.version     = '1.1.0'
+  s.version     = '2.0.0'
   s.date        = '2015-02-18'
   s.summary     = "Offers a simple API to open a window and draw in it"
   s.description = "Simple object oriented API for opening a window and drawing in it. Based on gosu. It's meant to teach beginners programming as a visualization of code can help."
