@@ -21,6 +21,6 @@ pen.draw_frame do
 end
 
 
-# You're set. No just show the sheet as usual and enjoy
+# You're set. Now just show the sheet as usual and enjoy
 # the wonderfully spinning line you just drew.
 sheet.show
