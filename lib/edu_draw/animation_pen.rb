@@ -57,7 +57,7 @@ module EduDraw
 		end
 
 		private
-
+			# Removes shapes so they wont be drawn on the next frame
 			def empty_shapes
 				shapes.clear
 			end

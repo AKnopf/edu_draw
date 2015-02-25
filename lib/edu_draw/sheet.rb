@@ -27,10 +27,8 @@ module EduDraw
 		# @param y [Fixnum] y-coordinate of starting position. Top is 0.
 		# @param angle [Fixnum] Direction of pen in degree. 0 points to the right.
 		# @param color [Gosu::Color] Color of the pen
-		def new_pen(x: 0, y: 0, angle: 0, color: Gosu::Color::GREEN)
-			pen = Pen.new(x: x, y: y, angle: angle, color: color)
-			pens << pen
-			pen
+		def new_pen(x: 0, y: 0, angle: 0, color: Pen::DEFAULT_COLOR)
+			create_pen Pen, x, y, angle, color
 		end
 
 		# Create a new {AnimationPen} that draws something different each frame
@@ -38,13 +36,21 @@ module EduDraw
 		# @see AnimationPen
 		#
 		# @param (see #new_pen)
-		def new_animation_pen(x: 0, y: 0, angle: 0, color: Gosu::Color::GREEN)
-			pen = AnimationPen.new(x: x, y: y, angle: angle, color: color)
-			pens << pen
-			pen
+		def new_animation_pen(x: 0, y: 0, angle: 0, color: Pen::DEFAULT_COLOR)
+			create_pen AnimationPen, x, y, angle, color
 		end
 
 		private
+
+			# Creates a pen of a certain kind
+			#
+			# @param kind [class] Class of the pen to create
+			def create_pen(kind, x, y, angle, color)
+				pen = kind.new x: x, y: y, angle: angle, color: color
+				pens << pen
+				pen
+			end
+
 			# Makes gosu display the system mouse cursor
 			def needs_cursor?
 				true

@@ -2,6 +2,9 @@ module EduDraw
 	# A Pen is a drawing tool that provides basic drawing functionalities on a 2d {Sheet}.
 	class Pen
 
+		# Default color for pens
+		DEFAULT_COLOR = Gosu::Color::GREEN
+
 		# Tolerance with which to consider two points the same
 		PIXEL_TOLERANCE = 0.2
 		private_constant :PIXEL_TOLERANCE
