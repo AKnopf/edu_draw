@@ -1,6 +1,8 @@
 # edu_draw
 Simple ruby drawing API based on gosu meant for educational purposes.
 
+[![Code Climate](https://codeclimate.com/github/AKnopf/edu_draw/badges/gpa.svg)](https://codeclimate.com/github/AKnopf/edu_draw)
+
 ## Install
 
 		gem install edu_draw
