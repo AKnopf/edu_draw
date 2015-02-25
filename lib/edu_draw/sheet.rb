@@ -3,7 +3,9 @@ module EduDraw
 	class Sheet < Gosu::Window
 
 		# @private
-		attr_reader :shapes
+		# All pens created by and for this sheet
+		attr_reader :pens
+		private :pens
 
 		# Creates a new Sheet
 		#
@@ -13,39 +15,64 @@ module EduDraw
 		def initialize(x: 100, y: 100, title: "A blank sheet")
 			super x, y, false
 			self.caption = title
-			@shapes = []
+			@pens = []
 		end
 
-		# @private
-		def needs_cursor?
-			true
-		end
 
 		# Creates a new {Pen} that draws on self
 		#
-		# @see {Pen}
+		# @see Pen
 		#
 		# @param x [Fixnum] x-coordinate of starting position. Left is 0.
 		# @param y [Fixnum] y-coordinate of starting position. Top is 0.
 		# @param angle [Fixnum] Direction of pen in degree. 0 points to the right.
 		# @param color [Gosu::Color] Color of the pen
-		def new_pen(x: 0, y: 0, angle: 0, color: Gosu::Color::GREEN)
-			Pen.new(self, x: x, y: y, angle: angle, color: color)
+		def new_pen(x: 0, y: 0, angle: 0, color: Pen::DEFAULT_COLOR)
+			create_pen Pen, x, y, angle, color
 		end
 
-		# @private
-		def draw
-			shapes.each do |shape|
-				method,*args = shape
-				send method, *args
-			end
+		# Create a new {AnimationPen} that draws something different each frame
+		#
+		# @see AnimationPen
+		#
+		# @param (see #new_pen)
+		def new_animation_pen(x: 0, y: 0, angle: 0, color: Pen::DEFAULT_COLOR)
+			create_pen AnimationPen, x, y, angle, color
 		end
 
-		# @private
-		def update
-			if button_down? Gosu::KbEscape
-				close
+		private
+
+			# Creates a pen of a certain kind
+			#
+			# @param kind [class] Class of the pen to create
+			def create_pen(kind, x, y, angle, color)
+				pen = kind.new x: x, y: y, angle: angle, color: color
+				pens << pen
+				pen
 			end
-		end
+
+			# Makes gosu display the system mouse cursor
+			def needs_cursor?
+				true
+			end
+
+			# Gosu hook method for drawing window content
+			def draw
+				pens.map(&:shapes).each do |shapes|
+					shapes.each do |shape|
+						method,*args = shape
+						send method, *args
+					end
+				end
+			end
+
+			# Gosu hook method for updating game state before drawing
+			# This is called once per frame
+			def update
+				pens.each &:update
+				if button_down? Gosu::KbEscape
+					close
+				end
+			end
 	end
 end
